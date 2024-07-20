@@ -1,0 +1,612 @@
+/* General Styles */
+body {
+    background-color: #121212;
+    color: #FFFFFF;
+    font-family: 'Archivo', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.logo {
+    width: 40%;
+    margin-bottom: 0px;
+}
+
+.logo-enc, .logo-ma {
+    width: 25%;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button, .button-main {
+    padding: 15px 100px;
+    background-color: #444444;
+    color: rgb(190, 190, 190);
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    border-color: #121212;
+    text-align: center;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.button-main {
+    background-color: #2a2a2a;
+}
+
+.button:hover, .button-main:hover {
+    background-color: #2a2a2a;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: .8em;
+}
+
+.footer p {
+    font-size: 1em;
+    color: #FFFFFF;
+}
+
+/* Home Page */
+.intro p {
+    font-size: 0.8em;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 40px;
+    color: rgb(149, 149, 149);
+}
+
+.intro h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    color: rgb(149, 149, 149);
+}
+
+.intro ol {
+    text-align: left;
+    margin: 10;
+    margin-bottom: 50px;
+    max-width: 600px;
+    padding-left: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    color: rgb(190, 190, 190);
+}
+
+.intro ol li {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+/* Encrypt Page */
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.nav-item {
+    color: #CCCCCC;
+    text-decoration: none;
+    margin: 0 20px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid transparent;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #FFFFFF;
+    border-bottom: 3px solid #FFFFFF; 
+}
+
+.encryption-steps,
+.decryption-steps {
+    margin-top: 20px;
+    border: 10px dashed rgba(255, 255, 255, 0.5); 
+    padding: 30px;
+    border-radius: 10px;
+    position: relative; 
+}
+
+.encryption-steps2,
+.encryption-steps3 {
+    margin-top: 20px;
+    padding: 30px;
+    border-radius: 10px;
+    display: none; 
+}
+
+.intro-enc {
+    margin-top: 20px;
+    margin-bottom: -15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.intro-enc h2 {
+    font-size: 1.0em;
+    color: #888888;
+    background-color: #CCCCCC;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    text-align: center;
+    margin-right: 10px;
+}
+
+.intro-enc p {
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+}
+
+.file-upload-btn {
+    display: none;
+}
+
+#fileName {
+    font-size: 1.2em;
+    color: #888888;
+    display: block;
+    width: 150px;
+    text-align: center;
+    padding: 10px;
+    background-color: #444444;
+    border: none;
+    border-radius: 5px;
+    margin: 10px auto;
+    cursor: pointer;
+}
+
+#fileName:hover {
+    background-color: #2a2a2a;
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #333333;
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1em;
+}
+
+.download-btn, .back-btn, .next-btn, .next-btn-2 {
+    width: 48%;
+    padding: 15px;
+    background-color: #444444;
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.download-btn {
+    width: 100%;
+}
+
+.next-btn, .next-btn-2 {
+    background-color: #486148;
+}
+
+.next-btn{
+    width: 100%;
+}
+
+.download-btn:hover,
+.back-btn:hover {
+    background-color: #555555;
+}
+
+.next-btn:hover {
+    background-color: #1d2f1d;
+}
+
+.reset-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: rgb(100, 12, 12);
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background-color: #4E2B2B;
+}
+
+#step2-intro, #step3-intro {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#success-message {
+    background-color: #486148;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.completed-step {
+    color: #888888;
+}
+
+.flashes {
+    list-style-type: none;
+    padding: 0;
+}
+.flashes li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+.flashes .error {
+    background-color: #ffcccc;
+    border: 1px solid #ff0000;
+    color: #ff0000;
+}
+/* 
+Key Management
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input[type="text"], input[type="date"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button[type="submit"] {
+    padding: 10px;
+    background-color: #444444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #212121;
+} */
+
+/* Login and Register Pages */
+.form-container {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.form-container h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #FFFFFF;
+}
+
+.form-container form {
+    display: inline-block;
+    text-align: left;
+}
+
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.form-container button {
+    width: 100%;
+    padding: 15px;
+    background-color: #444444;
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-container button:hover {
+    background-color: #555555;
+}
+
+.form-container p {
+    margin-top: 20px;
+    color: #CCCCCC;
+}
+
+.form-container a {
+    color: #FFFFFF;
+    text-decoration: underline;
+}
+
+.form-container a:hover {
+    text-decoration: none;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+input[type="text"],
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Manage Access Page */
+
+.manage-access-container {
+    margin-top: 387.5px;
+    text-align: center;
+    margin-right: -12.5px;
+}
+
+
+.logo-ma {
+    display: block;
+    margin: 0 auto 20px;
+    width: 21.5%;
+}
+
+.manage-access-h1 {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 2em;
+    margin-top: 40px;
+    color: #fff;
+}
+
+.manage-access-ul {
+    list-style-type: none;
+    padding: 0;
+    width: 80%;
+    max-width: 800px;
+    margin: 20px auto;
+}
+
+.manage-access-li {
+    background-color: #333;
+    border: 2px solid #444;
+    border-radius: 10px;
+    margin: 10px 0;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 15px;
+}
+
+.manage-access-h3 {
+    font-size: 1.5em;
+    margin: 0;
+    color: #fff;
+}
+
+.manage-access-p {
+    margin: 10px 0;
+    font-size: 1em;
+    color: #aaa;
+}
+
+.manage-access-form {
+    display: inline-block;
+    margin: 5px 10px;
+}
+
+.manage-access-label {
+    font-size: 1em;
+    color: #fff;
+}
+
+.manage-access-input {
+    padding: 10px;
+    margin: 5px 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 200px;
+    background-color: #555;
+    color: #fff;
+}
+
+.manage-access-button {
+    padding: 10px 20px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.manage-access-button:hover {
+    background-color: #666;
+}
+
+.manage-access-ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.manage-access-li {
+    position: relative;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.file-content {
+    margin-right: 40px; /* Make space for the delete icon */
+}
+
+.remove-file-form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.remove-file-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.delete-icon {
+    width: 24px; /* Adjust size as needed */
+    height: 24px;
+    filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%); /* This makes the icon red */
+}
+
+.remove-file-button:hover .delete-icon {
+    filter: invert(12%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%); /* Darker red on hover */
+}
+
+.manage-access-form {
+    margin-bottom: 10px;
+}
+
+.manage-access-label, .manage-access-input, .manage-access-button {
+    margin-right: 10px;
+}
+
+.remove-file-button:focus,
+.remove-file-button:active {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* Logout Button */
+.logout-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.button-logout {
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.logout-icon {
+    width: 30px; 
+    height: 30px; 
+    filter: invert(1); 
+}
+
+.button-logout:hover .logout-icon {
+    opacity: 0.7; 
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .button, .button-main {
+        padding: 15px 50px;
+        font-size: 1em;
+    }
+    
+    .logout-container {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .logout-icon {
+        width: 20px;
+        height: 20px;
+    }
+
+    .manage-access-container {
+        margin-top: 30px;
+    }
+
+    .manage-access-ul {
+        width: 90%;
+    }
+}

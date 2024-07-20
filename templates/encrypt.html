@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encrypt - Encryptron</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header">
+        <div class="container">
+            <a href="{{ url_for('home') }}">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-enc" alt="Encryptron Logo">
+            </a>
+            <div class="buttons">
+                <a href="{{ url_for('encrypt') }}" class="button-main">Encryption</a>
+                <a href="{{ url_for('decrypt') }}" class="button">Decryption</a>
+                <a href="{{ url_for('manage_access') }}" class="button">Manage Access</a>
+            </div>
+            <div class="logout-container">
+                <a href="{{ url_for('logout') }}" class="button-logout"><img src="static/images/logout-icon.png" class="logout-icon" alt="Logout Icon"></a>
+            </div>    
+            <div class="intro-enc" id="step1-intro">
+                <h2>1</h2>
+                <p>Choose files to encrypt</p>
+            </div>
+            <div class="intro-enc" id="step2-intro" style="display:none;">
+                <h2>2</h2>
+                <p>Enter the encryption key or passphrase</p>
+            </div>
+            <div class="intro-enc" id="step3-intro" style="display:none;">
+                <h2>3</h2>
+                <p>Download Encrypted File</p>
+            </div>
+            <div class="encryption-steps" id="step1">
+                <div class="file-upload" onclick="document.getElementById('fileInput').click();">
+                    <input type="file" id="fileInput" name="file" class="file-upload-btn">
+                    <span id="fileName">Browse Files</span>
+                </div>
+                <button type="button" class="reset-btn" id="reset-btn" onclick="resetFileInput()" style="display:none;">Reset</button>
+            </div>
+            <button type="button" class="next-btn" id="next-btn-step1" onclick="showStep2()" style="display:none;">Next</button>
+            <div class="encryption-steps2" id="step2" style="display:none;">
+                <input type="password" id="passwordInput" placeholder="Enter your password" class="input-field" required>
+                <button type="button" class="back-btn" onclick="showStep1()">Back</button>
+                <button type="button" class="next-btn-2" onclick="showStep3()">Next</button>
+            </div>
+            <div class="encryption-steps3" id="step3" style="display:none;">
+                <div id="success-message" style="display:none; color: #FFFFFF; margin-top: 20px;"></div>
+                <form action="{{ url_for('encrypt') }}" method="post" enctype="multipart/form-data" onsubmit="return prepareFormData()">
+                    <input type="file" id="hiddenFileInput" name="file" style="display: none;">
+                    <input type="hidden" id="hiddenPassword" name="password">
+                    <button type="submit" class="download-btn">Encrypt</button>
+                </form>
+            </div>
+            <div id="download-success-message" style="display:none; color: #FFFFFF; margin-top: 20px;">
+                You have successfully downloaded your encrypted file(s).
+            </div>
+            <div id="main-menu-btn" style="display:none; margin-top: 20px;">
+                <a href="{{ url_for('home') }}" class="button">Main Menu</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function() {
+            var fileName = this.files[0].name;
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('reset-btn').style.display = 'block';
+            document.getElementById('next-btn-step1').style.display = 'block';
+        });
+
+        function resetFileInput() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileName').textContent = 'Browse Files';
+            document.getElementById('reset-btn').style.display = 'none';
+            document.getElementById('next-btn-step1').style.display = 'none';
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step2-intro').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step3-intro').style.display = 'none';
+        }
+
+        function showStep1() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step2-intro').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            document.getElementById('step3-intro').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+            document.getElementById('download-success-message').style.display = 'none';
+            document.getElementById('main-menu-btn').style.display = 'none';
+            document.querySelectorAll('.intro-enc p').forEach(el => el.classList.remove('completed-step'));
+        }
+
+        function showStep2() {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('step2-intro').style.display = 'flex';
+            document.getElementById('next-btn-step1').style.display = 'none';
+            document.querySelector('#step1-intro p').classList.add('completed-step');
+        }
+
+        function showStep3() {
+            var passwordInput = document.getElementById('passwordInput');
+            if (passwordInput.value.trim() === '') {
+                alert('Please enter a password before proceeding.');
+                return; 
+            }
+
+            document.getElementById('step3').style.display = 'block';
+            document.getElementById('step3-intro').style.display = 'flex';
+            document.getElementById('step2').style.display = 'none';
+            var fileName = document.getElementById('fileInput').files[0].name;
+            document.getElementById('success-message').innerHTML = '<strong>' + fileName + '</strong> is ready to be encrypted';
+            document.getElementById('success-message').style.display = 'block';
+            document.getElementById('download-success-message').style.display = 'none';
+            document.getElementById('main-menu-btn').style.display = 'none';
+            document.getElementById('next-btn-step1').style.display = 'none';
+            document.querySelector('#step2-intro p').classList.add('completed-step');
+        }
+
+        function showDownloadSuccess() {
+            document.getElementById('download-success-message').style.display = 'block';
+            document.getElementById('main-menu-btn').style.display = 'block';
+        }
+
+        function prepareFormData() {
+            var fileInput = document.getElementById('fileInput');
+            var hiddenFileInput = document.getElementById('hiddenFileInput');
+            var passwordInput = document.getElementById('passwordInput');
+            var hiddenPassword = document.getElementById('hiddenPassword');
+            
+            if (fileInput.files.length > 0) {
+                var dataTransfer = new DataTransfer();
+                dataTransfer.items.add(fileInput.files[0]);
+                hiddenFileInput.files = dataTransfer.files;
+            } else {
+                alert('Please select a file to encrypt.');
+                return false;
+            }
+            
+            if (passwordInput.value) {
+                hiddenPassword.value = passwordInput.value;
+            } else {
+                alert('Please enter a password.');
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
+</body>
+</html>

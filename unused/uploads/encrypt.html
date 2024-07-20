@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encrypt - Encryptron</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header">
+        <div class="container">
+            <img src="static/images/logo.png" class="logo-enc" alt="Encryptron Logo">
+            <div class="buttons">
+                <a href="encrypt.html" class="button-main">Encryption</a>
+                <a href="decrypt.html" class="button">Decryption</a>
+                <a href="key_management.html" class="button">Key Management</a>
+            </div>
+            <div class="intro-enc">
+                <h2>1</h2>
+                <p>Choose files to encrypt</p>
+            </div>
+            <div class="encryption-steps">
+                <form action="/encrypt" method="post" enctype="multipart/form-data">
+                    <div id="step1" class="step">
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click();">
+                            <input type="file" id="fileInput" name="file" class="file-upload-btn">
+                            <span id="fileName">Browse Files</span>
+                        </div>
+                    </div>
+                    <div id="step2" class="step" style="display:none;">
+                        <h2>2</h2>
+                        <p>Enter the encryption key or passphrase</p>
+                        <input type="password" name="password" placeholder="Enter your password" class="input-field" required>
+                        <button type="button" class="download-btn" onclick="showStep3()">Next</button>
+                    </div>
+                    <div id="step3" class="step" style="display:none;">
+                        <h2>3</h2>
+                        <p>Download Encrypted File</p>
+                        <button type="submit" class="download-btn">Encrypt</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function() {
+            var fileName = this.files[0].name;
+            document.getElementById('fileName').textContent = fileName;
+            document.getElementById('step2').style.display = 'block';
+        });
+
+        function showStep3() {
+            document.getElementById('step3').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

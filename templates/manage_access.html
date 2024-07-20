@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Access - Encryptron</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="manage-access-container">
+        <div class="header">
+            <a href="./">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" class="logo-ma" alt="Encryptron Logo">
+            </a>
+            <div class="buttons">
+                <a href="{{ url_for('encrypt') }}" class="button">Encryption</a>
+                <a href="{{ url_for('decrypt') }}" class="button">Decryption</a>
+                <a href="{{ url_for('manage_access') }}" class="button-main">Manage Access</a>
+            </div>
+            <div class="logout-container">
+                <a href="{{ url_for('logout') }}" class="button-logout"><img src="static/images/logout-icon.png" class="logout-icon" alt="Logout Icon"></a>
+            </div>    
+        </div>
+        <div class="content">
+            <h1 class="manage-access-h1">Manage Access to Your Files</h1>
+            <ul class="manage-access-ul">
+                {% for file in user_files %}
+                    <li class="manage-access-li">
+                        <div class="file-content">
+                            <h3 class="manage-access-h3">{{ file[1] }}</h3>
+                            <p class="manage-access-p">Users with access: {{ file[2] if file[2] else 'None' }}</p>
+                            <form action="{{ url_for('grant_access') }}" method="post" class="manage-access-form">
+                                <input type="hidden" name="file_id" value="{{ file[0] }}">
+                                <label for="username" class="manage-access-label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grant Access to:</label>
+                                <input type="text" name="username" required class="manage-access-input">
+                                <button type="submit" class="manage-access-button">Grant Access</button>
+                            </form>
+                            <form action="{{ url_for('revoke_access') }}" method="post" class="manage-access-form">
+                                <input type="hidden" name="file_id" value="{{ file[0] }}">
+                                <label for="username" class="manage-access-label">Revoke Access from:</label>
+                                <input type="text" name="username" required class="manage-access-input">
+                                <button type="submit" class="manage-access-button">Revoke Access</button>
+                            </form>
+                        </div>
+                        <form action="{{ url_for('remove_file') }}" method="post" class="remove-file-form">
+                            <input type="hidden" name="file_id" value="{{ file[0] }}">
+                            <button type="submit" class="remove-file-button" title="Remove File">
+                                <img src="{{ url_for('static', filename='images/delete-icon.png') }}" alt="Delete" class="delete-icon">
+                            </button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="footer">
+            <p>&copy; 2024</p>
+        </div>
+    </div>
+</body>
+</html>

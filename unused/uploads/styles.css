@@ -1,0 +1,303 @@
+/* General Styles */
+body {
+    background-color: #121212;
+    color: #FFFFFF;
+    font-family: 'Archivo', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Home Page */
+
+.container {
+    max-width: 800px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.logo {
+    width: 40%;
+    margin-bottom: 0px;
+}
+
+.intro p {
+    font-size: 0.8em;
+    line-height: 1.5;
+    text-align: center;
+    margin-bottom: 40px;
+    color: rgb(149, 149, 149);
+}
+
+.intro h2 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-family: 'Montserrat', sans-serif;
+    text-align: left;
+    color: rgb(149, 149, 149);
+}
+
+.intro ol {
+    text-align: left;
+    margin: 10;
+    margin-bottom: 50px;
+    max-width: 600px;
+    padding-left: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 15px;
+    color: rgb(190, 190, 190);
+}
+
+.intro ol li {
+    font-size: 1em;
+    margin-bottom: 10px;
+}
+
+.buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button {
+    padding: 15px 100px;
+    background-color: #444444;
+    color: rgb(190, 190, 190);
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    border-color: #121212;
+    text-align: center;  /* Center the text */
+    white-space: nowrap; /* Prevent text wrapping */
+    display: inline-block; /* Ensure the element behaves like a button */
+}
+
+
+.button:hover {
+    background-color: #2a2a2a;
+}
+
+.button-main {
+    padding: 15px 100px;
+    background-color: #2a2a2a;
+    color: rgb(190, 190, 190);
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+    border-color: #121212;
+    text-align: center;  /* Center the text */
+    white-space: nowrap; /* Prevent text wrapping */
+    display: inline-block; /* Ensure the element behaves like a button */
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: .8em;
+}
+
+/* Encrypt Page *//* Encrypt Page */
+
+.logo-enc {
+    width: 25%;
+    margin-bottom: 20px;
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.nav-item {
+    color: #CCCCCC;
+    text-decoration: none;
+    margin: 0 20px;
+    padding-bottom: 5px;
+    border-bottom: 3px solid transparent;
+    font-size: 18px;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    color: #FFFFFF;
+    border-bottom: 3px solid #FFFFFF; /* White color for active and hover */
+}
+
+.encryption-steps {
+    margin-top: 20px;
+    border: 10px dashed rgba(255, 255, 255, 0.5); /* Dashed border only for step 1 */
+    padding: 30px;
+    border-radius: 10px;
+    position: relative; /* For positioning reset button */
+}
+
+.encryption-steps2,
+.encryption-steps3 {
+    margin-top: 20px;
+    padding: 30px;
+    border-radius: 10px;
+    display: none; /* Hide steps 2 and 3 by default */
+}
+
+.intro-enc {
+    margin-top: 20px;
+    margin-bottom: -15px;
+    display: flex;
+    align-items: center; /* Align items vertically centered if needed */
+    justify-content: flex-start; /* Align items to the left */
+}
+
+.intro-enc h2 {
+    font-size: 1.0em;
+    color: #888888; /* Grey color for text inside the circle */
+    background-color: #CCCCCC; /* Grey background color for the circle */
+    width: 30px;
+    height: 30px;
+    line-height: 30px; /* Ensure text is vertically centered */
+    border-radius: 50%; /* Make the element a circle */
+    text-align: center; /* Center the text horizontally */
+    margin-right: 10px;
+}
+
+.intro-enc p {
+    font-size: 1em;
+    font-family: 'Montserrat', sans-serif;
+    margin: 0; /* Remove default margin */
+}
+
+.file-upload-btn {
+    display: none;
+}
+
+#fileName {
+    font-size: 1.2em;
+    color: #888888;
+    display: block;
+    width: 150px; /* Adjust the width as needed */
+    text-align: center; /* Center the text within the button */
+    padding: 10px; /* Add padding for better aesthetics */
+    background-color: #444444; /* Background color to match the button style */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Rounded corners */
+    margin: 10px auto; /* Center align if block-level */
+    cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+#fileName:hover {
+    background-color: #2a2a2a; /* Darker background color on hover */
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #333333;
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1em;
+}
+
+.download-btn,
+.back-btn,
+.next-btn, .next-btn-2 {
+    width: 48%; /* Adjust width for side-by-side alignment */
+    padding: 15px;
+    background-color: #444444; /* Dark grey color for button */
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+    display: inline-block; /* Align buttons side by side */
+}
+
+.next-btn {
+    background-color: #486148;
+    width: 100%;
+}
+
+.next-btn-2 {
+    background-color: #486148;
+}
+
+.download-btn:hover,
+.back-btn:hover{
+    background-color: #555555;
+}
+
+.next-btn:hover {
+    background-color: #1d2f1d
+}
+
+.reset-btn {
+    position: absolute; /* Position inside the step container */
+    bottom: 10px;
+    right: 10px;
+    padding: 5px 10px; /* Smaller size */
+    background-color: red; /* Red background */
+    border: none;
+    border-radius: 5px;
+    color: #FFFFFF;
+    font-size: 0.8em; /* Smaller font size */
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.reset-btn:hover {
+    background-color: #4E2B2B;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footer p {
+    font-size: 1em;
+    color: #FFFFFF;
+}
+
+#step2-intro, #step3-intro {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+#success-message { /* Success message container */
+    background-color: #486148; /* Green background color */
+    color: white; /* White text color */
+    text-align: center; /* Center align text */
+    padding: 10px; /* Add padding for better aesthetics */
+    border-radius: 5px; /* Rounded corners */
+}
+
+.decryption-steps {
+    margin-top: 20px;
+    border: 10px dashed rgba(255, 255, 255, 0.5);
+    padding: 30px;
+    border-radius: 10px;
+}
+
