@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, send_file, redirect, url_for, session, flash
-from Crypto.Protocol.KDF import PBKDF2
-from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
 from werkzeug.security import generate_password_hash, check_password_hash
 import sqlite3
 import os
 import io
+import hashlib
 import zipfile
 
 app = Flask(__name__)
@@ -13,56 +11,100 @@ app.secret_key = 'supersecretkey'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
 app.config['DATABASE'] = 'new_database.db'
 
-# Encryptor class to handle encryption and decryption
+# Custom Feistel Cipher for encryption & decryption
 class Encryptor:
     def __init__(self):
-        self.salt_size = 16
-        self.nonce_size = 16
-        self.tag_size = 16
+        self.rounds = 10  # Feistel Cipher Rounds
+        self.block_size = 16  # Block size for processing (in bytes)
 
-    def derive_key(self, password, salt):
-        return PBKDF2(password, salt, dkLen=32, count=100000)
+    def derive_key(self, password):
+        return hashlib.sha256(password.encode()).digest()[:16]  # Get 16-byte key
 
-    def encrypt(self, file, password):
-        salt = get_random_bytes(self.salt_size)
-        key = self.derive_key(password.encode(), salt)
-        cipher = AES.new(key, AES.MODE_GCM)
-        plaintext = self.compress_file(file)
-        ciphertext, tag = cipher.encrypt_and_digest(plaintext)
-        return salt + cipher.nonce + tag + ciphertext
+    def feistel_round(self, left, right, key):
+        new_left = right
+        new_right = bytes(l ^ r for l, r in zip(left, key))
+        return new_left, new_right
     
+    def compress_data(self, data):
+        compressed_io = io.BytesIO()
+        with zipfile.ZipFile(compressed_io, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+            zf.writestr('compressed_file', data)
+        compressed_io.seek(0)
+        return b'COMP' + compressed_io.read() 
+
+    def is_valid_decryption(self, decrypted_data):
+        if not decrypted_data or len(decrypted_data) < 10:
+            return False 
+
+        if decrypted_data[:4] == b'COMP':  
+            return True 
+
+        valid_bytes = sum(1 for byte in decrypted_data if 32 <= byte <= 126 or byte in (9, 10, 13))
+        validity_percentage = valid_bytes / len(decrypted_data)
+
+        return validity_percentage > 0.75  
+
+
+    # Encrypt using Feistel Cipher
+    def encrypt(self, file, password):
+        key = self.derive_key(password)
+        plaintext = file.read()
+        compressed_data = self.compress_data(plaintext)  
+
+        encrypted_data = bytearray()
+        for i in range(0, len(compressed_data), self.block_size): 
+            block = bytearray(compressed_data[i:i + self.block_size])
+            if len(block) < self.block_size:
+                block.extend([0] * (self.block_size - len(block))) 
+
+            left, right = block[:8], block[8:]  
+
+            for _ in range(self.rounds):
+                left, right = self.feistel_round(left, right, key)
+
+            encrypted_data.extend(left + right)
+
+        return bytes(encrypted_data)
+
+    def decompress_data(self, data):
+        if data[:4] != b'COMP': 
+            return data 
+        
+        decompressed_io = io.BytesIO(data[4:])  
+        with zipfile.ZipFile(decompressed_io, mode='r') as zf:
+            return zf.read('compressed_file')
+
+        
     def decrypt(self, file, password):
-        data = file.read()
-        salt = data[:self.salt_size]
-        nonce = data[self.salt_size:self.salt_size + self.nonce_size]
-        tag = data[self.salt_size + self.nonce_size:self.salt_size + self.nonce_size + self.tag_size]
-        ciphertext = data[self.salt_size + self.nonce_size + self.tag_size:]
-        key = self.derive_key(password.encode(), salt)
-        cipher = AES.new(key, AES.MODE_GCM, nonce=nonce)
+        key = self.derive_key(password)
+        encrypted_data = file.read()
+        decrypted_data = bytearray()
+
+        for i in range(0, len(encrypted_data), self.block_size):
+            block = bytearray(encrypted_data[i:i + self.block_size])
+            left, right = block[:8], block[8:]
+
+            for _ in range(self.rounds):
+                right, left = self.feistel_round(right, left, key)  # Reverse Feistel
+
+            decrypted_data.extend(left + right)
+
+        if not self.is_valid_decryption(decrypted_data):
+            flash("Wrong Password! Please try again.", "error")
+            return None, None 
+
         try:
-            plaintext = cipher.decrypt_and_verify(ciphertext, tag)
-            plaintext = self.decompress_file(plaintext)
-        except (ValueError, KeyError):
-            raise ValueError("Incorrect password or corrupted file")
-        original_filename = os.path.splitext(file.filename)[0]
-        return plaintext, original_filename
+            decompressed_data = self.decompress_data(bytes(decrypted_data))
+        except zipfile.BadZipFile:
+            flash("Decryption successful, but file may not be valid (no compression detected)", "error")
+            return None, None  
 
-    def compress_file(self, file):
-        compressed_data = io.BytesIO()
-        with zipfile.ZipFile(compressed_data, mode='w', compression=zipfile.ZIP_DEFLATED) as zip_file:
-            zip_file.writestr(file.filename, file.read())
-        compressed_data.seek(0)
-        return compressed_data.read()
+        original_filename = file.filename.replace('.enc', '') if file.filename.endswith('.enc') else file.filename
 
-    def decompress_file(self, data):
-        decompressed_data = io.BytesIO(data)
-        with zipfile.ZipFile(decompressed_data, mode='r') as zip_file:
-            for name in zip_file.namelist():
-                return zip_file.read(name)
+        return decompressed_data, original_filename 
 
 encryptor = Encryptor()
 
-# Initialize the database
 def init_db():
     with sqlite3.connect(app.config['DATABASE']) as conn:
         c = conn.cursor()
@@ -78,6 +120,7 @@ def init_db():
                 id INTEGER PRIMARY KEY, 
                 filename TEXT, 
                 user_id INTEGER, 
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             )
         ''')
@@ -100,7 +143,7 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        hashed_password = generate_password_hash(password, method='sha256')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         with sqlite3.connect(app.config['DATABASE']) as conn:
             c = conn.cursor()
             try:
@@ -111,6 +154,7 @@ def register():
             except sqlite3.IntegrityError:
                 flash('Username already exists.')
     return render_template('register.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -150,30 +194,33 @@ def encrypt():
         return redirect(url_for('login'))
     
     if request.method == 'POST':
-        if 'file' not in request.files:
-            return 'No file part', 400
-        file = request.files['file']
-        if file.filename == '':
-            return 'No selected file', 400
-        if file:
-            password = request.form['password']
-            try:
-                encrypted_data = encryptor.encrypt(file, password)
-                encrypted_filename = file.filename + '.enc'
-                with sqlite3.connect(app.config['DATABASE']) as conn:
-                    c = conn.cursor()
-                    c.execute("INSERT INTO files (filename, user_id) VALUES (?, ?)", (encrypted_filename, session['user_id']))
-                    file_id = c.lastrowid
-                    c.execute("INSERT INTO permissions (file_id, user_id) VALUES (?, ?)", (file_id, session['user_id']))
-                    conn.commit()
-                return send_file(
-                    io.BytesIO(encrypted_data),
-                    mimetype='application/octet-stream',
-                    as_attachment=True,
-                    download_name=encrypted_filename
-                )
-            except Exception as e:
-                return f'Encryption failed: {str(e)}', 500
+        file = request.files.get('file')
+        password = request.form['password']
+        if not file or file.filename == '':
+            flash('No file selected.', 'error')
+            return redirect(url_for('encrypt'))
+
+        try:
+            encrypted_data = encryptor.encrypt(file, password)
+            encrypted_filename = file.filename + '.enc'
+
+            with sqlite3.connect(app.config['DATABASE']) as conn:
+                c = conn.cursor()
+                c.execute("INSERT INTO files (filename, user_id) VALUES (?, ?)", (encrypted_filename, session['user_id']))
+                file_id = c.lastrowid
+                c.execute("INSERT INTO permissions (file_id, user_id) VALUES (?, ?)", (file_id, session['user_id']))
+                conn.commit()
+
+            return send_file(
+                io.BytesIO(encrypted_data),
+                mimetype='application/octet-stream',
+                as_attachment=True,
+                download_name=encrypted_filename
+            )
+        except Exception as e:
+            flash(f'Encryption failed: {str(e)}', 'error')
+            return redirect(url_for('encrypt'))
+
     return render_template('encrypt.html')
 
 @app.route('/decrypt', methods=['GET', 'POST'])
@@ -183,52 +230,57 @@ def decrypt():
         return redirect(url_for('login'))
     
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part', 'error')
+        file = request.files.get('file')
+        password = request.form['password']
+        if not file or file.filename == '':
+            flash('No file selected.', 'error')
             return redirect(url_for('decrypt'))
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file', 'error')
-            return redirect(url_for('decrypt'))
-        if file:
-            password = request.form['password']
-            try:
-                with sqlite3.connect(app.config['DATABASE']) as conn:
-                    c = conn.cursor()
-                    c.execute("SELECT id, user_id FROM files WHERE filename=?", (file.filename,))
-                    file_record = c.fetchone()
-                    has_permission = False
-                    if file_record:
-                        file_id, file_owner_id = file_record
-                        c.execute("""
-                            SELECT 1 FROM permissions 
-                            WHERE file_id=? AND user_id=?
-                            UNION
-                            SELECT 1 FROM files
-                            WHERE id=? AND user_id=?
-                        """, (file_id, session['user_id'], file_id, session['user_id']))
-                        permission_check = c.fetchone()
-                        has_permission = permission_check is not None
-                if has_permission:
-                    try:
-                        decrypted_data, original_filename = encryptor.decrypt(file, password)
-                        decrypted_filename = f"{os.path.splitext(original_filename)[0]}_decrypted{os.path.splitext(original_filename)[1]}"
-                        return send_file(
-                            io.BytesIO(decrypted_data),
-                            mimetype='application/octet-stream',
-                            as_attachment=True,
-                            download_name=decrypted_filename
-                        )
-                    except ValueError as e:
-                        flash(f'Decryption failed: {str(e)}', 'error')
-                        return redirect(url_for('decrypt'))
-                else:
-                    flash('You do not have permission to decrypt this file.', 'error')
-                    return redirect(url_for('decrypt'))
-            except Exception as e:
-                flash(f'An error occurred: {str(e)}', 'error')
+
+        with sqlite3.connect(app.config['DATABASE']) as conn:
+            c = conn.cursor()
+            c.execute("SELECT id, user_id FROM files WHERE filename=?", (file.filename,))
+            file_record = c.fetchone()
+            
+            if not file_record:
+                flash("File not found in the database.", 'error')
                 return redirect(url_for('decrypt'))
+
+            file_id, file_owner_id = file_record
+
+            c.execute("""
+                SELECT 1 FROM permissions WHERE file_id=? AND user_id=?
+                UNION
+                SELECT 1 FROM files WHERE id=? AND user_id=?
+            """, (file_id, session['user_id'], file_id, session['user_id']))
+            permission_check = c.fetchone()
+
+            if not permission_check:
+                flash("You do not have permission to decrypt this file.", 'error')
+                return redirect(url_for('decrypt'))
+
+        try:
+            decrypted_data, original_filename = encryptor.decrypt(file, password)
+
+            if decrypted_data is None:
+                return redirect(url_for('decrypt')) 
+            
+            if original_filename.endswith('.enc'):
+                original_filename = original_filename[:-4]  
+
+            return send_file(
+                io.BytesIO(decrypted_data),
+                mimetype='application/octet-stream',
+                as_attachment=True,
+                download_name=original_filename
+            )
+
+        except Exception as e:
+            flash(f'Decryption failed: {str(e)}', 'error')
+            return redirect(url_for('decrypt'))
+
+
     return render_template('decrypt.html')
+
 
 @app.route('/manage_access', methods=['GET', 'POST'])
 def manage_access():
@@ -329,3 +381,8 @@ def remove_file():
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
+
+
+
+
+      

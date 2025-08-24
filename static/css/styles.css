@@ -287,55 +287,6 @@ body {
     border: 1px solid #ff0000;
     color: #ff0000;
 }
-/* 
-Key Management
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-
-th {
-    background-color: #f2f2f2;
-}
-
-.icon-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-input[type="text"], input[type="date"] {
-    padding: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-button[type="submit"] {
-    padding: 10px;
-    background-color: #444444;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-button[type="submit"]:hover {
-    background-color: #212121;
-} */
 
 /* Login and Register Pages */
 .form-container {
@@ -420,6 +371,7 @@ input[type="password"] {
     margin-top: 387.5px;
     text-align: center;
     margin-right: -12.5px;
+    justify-content: top;
 }
 
 
@@ -516,7 +468,7 @@ input[type="password"] {
 }
 
 .file-content {
-    margin-right: 40px; /* Make space for the delete icon */
+    margin-right: 40px;
 }
 
 .remove-file-form {
@@ -533,7 +485,7 @@ input[type="password"] {
 }
 
 .delete-icon {
-    width: 24px; /* Adjust size as needed */
+    width: 24px; 
     height: 24px;
     filter: invert(21%) sepia(100%) saturate(7414%) hue-rotate(359deg) brightness(94%) contrast(117%); /* This makes the icon red */
 }
@@ -603,7 +555,7 @@ input[type="password"] {
     }
 
     .manage-access-container {
-        margin-top: 30px;
+        margin-top: 0px;
     }
 
     .manage-access-ul {
