@@ -9,7 +9,7 @@ import zipfile
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 app.config['UPLOAD_FOLDER'] = 'uploads/'
-app.config['DATABASE'] = 'new_database.db'
+app.config['DATABASE'] = 'database.db'
 
 # Custom Feistel Cipher for encryption & decryption
 class Encryptor:
